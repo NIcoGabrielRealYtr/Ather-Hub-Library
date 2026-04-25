@@ -1,0 +1,210 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/NIcoGabrielRealYtr/Ather-Hub-Library/refs/heads/main/Source"))()
+
+local Window = Library:Window({
+    Name = '<font color="rgb(175, 102, 126)">ather.</font>hub',
+    Logo = "rbxassetid://133425623304338"
+})
+
+local Combat = Window:Page({
+    Name = "Combat",
+    Description = "Combat features",
+    Icon = "lucide:sword",
+    Search = true
+})
+
+local Visuals = Window:Page({
+    Name = "Visuals",
+    Description = "Visual enhancements",
+    Icon = "lucide:eye"
+})
+
+local AimbotSub = Combat:SubPage({
+    Name = "Aimbot",
+    Icon = "lucide:target",
+    DisplayName = true
+})
+
+local ESPSub = Visuals:SubPage({
+    Name = "ESP",
+    Icon = "lucide:eye",
+    DisplayName = true
+})
+
+local MainSection = AimbotSub:Section({
+    Name = "Main Settings",
+    Side = 1
+})
+
+local VisualSection = ESPSub:Section({
+    Name = "Visual Options",
+    Side = 1
+})
+
+local aimbotToggle = MainSection:Toggle({
+    Name = "Enable Aimbot",
+    Flag = "AimbotEnabled",
+    Default = false,
+    Callback = function(Value)
+        print("Aimbot:", Value)
+    end
+})
+
+aimbotToggle:Keybind({
+    Flag = "AimbotKeybind",
+    Default = Enum.KeyCode.RightShift,
+    Mode = "Toggle",
+    Callback = function()
+        print("Keybind pressed")
+    end
+})
+
+aimbotToggle:Colorpicker({
+    Flag = "AimbotColor",
+    Default = Color3.fromRGB(255, 0, 0),
+    Alpha = 0.5,
+    Callback = function(Color, Alpha)
+        print("Color set:", Color)
+    end
+})
+
+MainSection:Button({
+    Name = "Test Notification",
+    Callback = function()
+        Window:Notify({
+            Title = "Test",
+            Description = "Button clicked!",
+            Duration = 3
+        })
+    end
+})
+
+MainSection:Slider({
+    Name = "Aimbot FOV",
+    Flag = "AimbotFOV",
+    Default = 50,
+    Min = 0,
+    Max = 360,
+    Decimals = 0,
+    Suffix = "°",
+    Callback = function(Value)
+        print("FOV:", Value)
+    end
+})
+
+MainSection:Dropdown({
+    Name = "Target Priority",
+    Flag = "TargetPriority",
+    Items = {"Closest", "Lowest HP", "Distance"},
+    Default = "Closest",
+    Callback = function(Value)
+        print("Priority:", Value)
+    end
+})
+
+-- Multi-select dropdown
+MainSection:Dropdown({
+    Name = "Filters",
+    Flag = "Filters",
+    Items = {"Players", "NPCs", "Vehicles"},
+    Default = {"Players", "NPCs"},
+    Multi = true,
+    Callback = function(Value)
+        print("Filters:", table.concat(Value, ", "))
+    end
+})
+
+local infoLabel = MainSection:Label({
+    Name = "Label"
+})
+
+MainSection:Label({
+    Name = "Highlight Color"
+}):Colorpicker({
+    Flag = "HighlightColor",
+    Default = Color3.fromRGB(0, 255, 0),
+    Callback = function(Color)
+        print("Color:", Color)
+    end
+})
+
+MainSection:Label({
+    Name = "ESP Shortcut"
+}):Keybind({
+    Flag = "ESPShortcut",
+    Default = Enum.KeyCode.F,
+    Mode = "Hold",
+    Callback = function()
+        print("Shortcut pressed")
+    end
+})
+
+MainSection:Textbox({
+    Name = "Username Filter",
+    Flag = "UsernameFilter",
+    Default = "",
+    Placeholder = "Enter username...",
+    Finished = true,
+    Callback = function(Value)
+        print("Filter:", Value)
+    end
+})
+
+MainSection:Textbox({
+    Name = "Sensitivity",
+    Flag = "Sensitivity",
+    Default = "1.5",
+    Numeric = true,
+    Finished = false,
+    Callback = function(Value)
+        print("Sensitivity:", Value)
+    end
+})
+
+local statusWidget = VisualSection:Status({
+    Name = "ESP Stats"
+})
+
+local playerCount = statusWidget:AddStatus("Players: 0")
+local fpsCounter = statusWidget:AddStatus("FPS: 60")
+
+-- Update dynamically
+task.spawn(function()
+    while task.wait(1) do
+        playerCount:Set("Players: " .. #game.Players:GetPlayers())
+    end
+end)
+
+VisualSection:List({
+    Items = {
+        {"Box ESP", "Enabled", "Red"},
+        {"Name ESP", "Enabled", "White"},
+        {"Distance", "Enabled", "Yellow"},
+    },
+    Callback = function(Value)
+        print("List order changed")
+    end
+})
+
+Window:Notify({
+    Title = "Welcome",
+    Description = "Script loaded!",
+    Duration = 3
+})
+
+MainSection:Button({
+    Name = "Show Dialog",
+    Callback = function()
+        Window:Dialog({
+            Title = "Confirmation",
+            Description = "Proceed?"
+        }):AddButton("Yes", function()
+            print("Confirmed")
+        end):AddButton("No", function() end)
+    end
+})
+
+local SettingsPage = Window:CreateSettingsPage()
+SettingsPage:CreateConfigsSection()  -- Save/load configs
+SettingsPage:CreateThemingSection()   -- Theme color pickers
+
+Library:CheckForAutoLoad()
