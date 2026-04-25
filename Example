@@ -167,7 +167,6 @@ local statusWidget = VisualSection:Status({
 local playerCount = statusWidget:AddStatus("Players: 0")
 local fpsCounter = statusWidget:AddStatus("FPS: 60")
 
--- Update dynamically
 task.spawn(function()
     while task.wait(1) do
         playerCount:Set("Players: " .. #game.Players:GetPlayers())
